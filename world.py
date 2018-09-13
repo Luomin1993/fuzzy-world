@@ -9,16 +9,64 @@ window = pyglet.window.Window()
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
-#================== STATE ======================
-def state_stop(world,id):
-    if world.objs[id].move_speed==0 and world.objs[id].rot_speed==0 : return True;
-    return False;
+#============== write your helper funcs here ==============
+def give_color_by_temp(temp):
+    if temp=='TEMP_HIGH':return 0,0,1;
+    if temp=='TEMP_NORMAL':return 0,1,0;
+    return 1,0,0;
 
-def state_move(world,id):
-    if world.objs[id].move_speed==0 and world.objs[id].rot_speed==0 : return False;
-    return True; 
 
-STATE = {"STOP":state_stop,"MOVE":state_move};
+#=============== judge STATE ==============
+def is_state_stop(obj):
+    return obj.move == 'STOP';
+
+def is_state_move(obj):
+    return obj.move == 'MOVE';
+
+def is_state_turnon(obj):
+    return obj.is_switch==1 and obj.turnon == 'TURN_ON';
+
+def is_state_turnoff(obj):
+    return obj.is_switch==1 and obj.turnon == 'TURN_OFF';
+
+def is_state_temphigh(obj):
+    return obj.temp == 'TEMP_HIGH';    
+
+STATE_JUDGE = {"STOP":is_state_stop,"MOVE":is_state_move,"TURN_ON":is_state_turnon,"TURN_OFF":is_state_turnoff,"TEMP_HIGH":is_state_temphigh};
+
+#================== set STATE ==============
+def set_state_stop(obj):
+    obj.move = 'STOP';return obj;
+
+def set_state_move(obj):
+    obj.move = 'MOVE';return obj;
+
+def set_state_turnon(obj):
+    if not obj.is_switch:return obj;
+    obj.turnon = 'TURN_ON';return obj;
+
+def set_state_turnoff(obj):
+    if not obj.is_switch:return obj;
+    obj.turnon = 'TURN_OFF';return obj;
+
+STATE_SET = {"STOP":set_state_stop,"MOVE":set_state_move,"TURN_ON":set_state_turnon,"TURN_OFF":set_state_turnoff};
+
+#================== STATE implementation ======================
+def state_stop(obj,dt):
+    #if world.objs[id].move_speed==0 and world.objs[id].rot_speed==0 : return True;
+    #return False;
+    obj.mesh.rotation.y += 0*dt;
+
+def state_move(obj,dt):
+    #if world.objs[id].move_speed==0 and world.objs[id].rot_speed==0 : return False;
+    #return True; 
+    obj.mesh.rotation.y += 12*dt;
+
+def state_temphigh(obj,dt):
+    obj.mesh.uniforms['diffuse'] = give_color_by_temp(obj.temp);
+
+STATE_IM = {"STOP":state_stop,"MOVE":state_move,"TEMP_HIGH":state_temphigh,"TEMP_NORMAL":state_temphigh};
+
 
 
 #=================== ACTION ======================
@@ -30,30 +78,30 @@ def action_move_forward(scene):
 
 def action_move_back(scene):
     scene.camera.position.z -= .2;
+ 
 
 ACTION = {"DO_NOTHING":action_donothing,
           "MOVE_FORWARD":action_move_forward,
-          "MOVE_BACK":action_move_back}
+          "MOVE_BACK":action_move_back,
+          "STOP":set_state_stop,
+          "MOVE":set_state_move};
           #"MOVE_LEFT":action_move_left,
           #"MOVE_RIGHT":action_move_right,
           #"TURN_LEFT":action_turn_left,
-          #"STOP":action_stop,
           #"MOVE":move}
-
-#for key in ACTION:pyglet.clock.schedule(ACTION[key]);
-
 
 class Obj_Attr(object):
     """The Attributes of the object in world"""
-    def __init__(self,mesh,position,move_speed,rot_speed,material_id,is_switch=False,turn_on=None):
+    def __init__(self,mesh,position,move_speed,rot_speed,material_id,is_switch=False,turn_on='TURN_OFF'):
         super(Obj_Attr, self).__init__()
-        self.mesh         =        mesh;
-        self.position     =    position;
-        self.move_speed   =  move_speed;
-        self.rot_speed    =   rot_speed;
-        self.material_id  = material_id;
-        self.is_switch    =   is_switch;
-        self.turn_on      =     turn_on;
+        self.mesh         =          mesh;
+        self.position     =      position;
+        self.move         =        'STOP';
+        self.rot_speed    =     rot_speed;
+        self.material_id  =   material_id;
+        self.is_switch    =     is_switch;
+        self.turnon       =       turn_on;
+        self.temp         = 'TEMP_NORMAL';  
 
 
 class World(object):
@@ -92,10 +140,13 @@ class World(object):
         (ID,model,mesh,pos) = re.match(r'OBJ:ID:"(.*)";MODEL:"(.*)";MESH:"(.*)";POS:(.*);',line).groups();
         #print (ID,model,mesh,pos);
         pos = pos.split(',');pos=[float(i) for i in pos];
-        entity = rc.WavefrontReader(model).get_mesh(mesh,position=(pos[0], .0,pos[1]), scale=.1, rotation=(0, 0, 0));
-        entity.uniforms['diffuse'] = 1, 1, 0 #give color;
+        entity = rc.WavefrontReader(model).get_mesh(mesh,position=(pos[0], -.1,pos[1]), scale=.1, rotation=(0, 0, 0));
+        #entity.uniforms['diffuse'] = 1, 1, 0 #give color;
         return Obj_Attr( entity,pos,0,0,0);
 
+    def make_world_to_fw(self,fw_path):
+        pass;
+    
     def add_obj(self):
         pass;  
 
@@ -112,13 +163,15 @@ class Agent(object):
     """The agent in the fworld"""
     def __init__(self):
         super(Agent, self).__init__()
-        self.actions = None;
-        self.reward = 0;
-        self.SG     = None; #Semantic Graph;
-        self.see    = None;
+        self.actions  = None;
+        self.reward   = 0;
+        self.SG       = None; #Semantic Graph;
+        self.see      = None;
 
-    def do_action(self):
-        return self.actions[np.random.randint(low=0, high=3)];
+    def do_action(self,ACT_ID,OBJ_ID):
+        #return self.actions[np.random.randint(low=0, high=3)];
+        global world;
+        ACTION[ACT_ID](world.objs[OBJ_ID]);
 
 class Teacher(object):
     """The teacher in the fworld"""
@@ -134,7 +187,7 @@ world.scene.meshes = [i.mesh for i in world.objs];
 #print len(world.objs);
 #print 'ok'
 print world.rules;
-SCENE = world.scene;
+#SCENE = world.scene;
 
 def move_camera(dt):
     global world;
@@ -152,22 +205,49 @@ def move_camera(dt):
     if keys[key.L]:
         world.scene.camera.position.y -= camera_speed * dt    
     if keys[key.H]:
-        world.scene.camera.rotation.x += camera_speed * dt
+        world.scene.camera.rotation.x += 13 * dt
     if keys[key.J]:
-        world.scene.camera.rotation.x -= camera_speed * dt        
-pyglet.clock.schedule(move_camera)
+        world.scene.camera.rotation.x -= 13 * dt        
+    if keys[key.A]:
+        world.scene.camera.rotation.y += 13 * dt;#world.scene.camera.rotation.z += 13 * dt;
+    if keys[key.D]:
+        world.scene.camera.rotation.y -= 13 * dt;#world.scene.camera.rotation.z -= 13 * dt;    
+pyglet.clock.schedule(move_camera);
+
+#----- draw the objects animations and states in the scene ------------
+def __draw__(dt):
+    # =========== Follow Rule ===========
+    for rule in world.rules:
+        #[(('STOP', 1), ('MOVE', 2))]
+        if STATE_JUDGE[rule[0][0]]( world.objs[ int(rule[0][1]) ] ): 
+            world.objs[ int(rule[1][1]) ] = STATE_SET[rule[1][0]](world.objs[ int(rule[1][1]) ]);
+    # =========== Follow State ==========
+    for obj in world.objs[1:]:
+        STATE_IM[obj.move](obj,dt);
+        STATE_IM[obj.temp](obj,dt);        
+pyglet.clock.schedule(__draw__);
 
 
-def agent_move(dt):
-    agent = Agent();
-    agent.actions = ['DO_NOTHING','MOVE_FORWARD','MOVE_BACK'];
-    ACTION[agent.do_action()](SCENE);
-pyglet.clock.schedule(agent_move)
+#----- agent navigation ---------
+# def agent_move(dt):
+#     agent = Agent();
+#     agent.actions = ['DO_NOTHING','MOVE_FORWARD','MOVE_BACK'];
+#     ACTION[agent.do_action()](world.scene);
+# pyglet.clock.schedule(agent_move)
+
+#----- agent take action and trigger rule-------
+time_passed = 0;
+agent = Agent();
+def agent_act(dt):
+    global time_passed,agent;
+    time_passed+=dt;print time_passed;
+    if time_passed>4:agent.do_action("MOVE",2);
+pyglet.clock.schedule(agent_act)
 
 @window.event
 def on_draw():
     global world;
     with rc.default_shader:
-        SCENE.draw()
+        world.scene.draw()
 
 pyglet.app.run();           

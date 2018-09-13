@@ -1,7 +1,11 @@
 WORLD_NAME:World Name;
 WORLD_SIZE:44;
-OBJ_NUM:2;
+OBJ_NUM:6;
 OBJ:ID:"1";MODEL:"/usr/local/lib/python2.7/dist-packages/ratcave/../assets/primitives.obj";MESH:"Monkey";POS:0,-1.2;
 OBJ:ID:"2";MODEL:"/usr/local/lib/python2.7/dist-packages/ratcave/../assets/primitives.obj";MESH:"Torus";POS:-.3,-1.2;
+OBJ:ID:"3";MODEL:"./obj/box/chair.obj";MESH:"chair";POS:.4,-1;
+OBJ:ID:"4";MODEL:"./obj/box/cow.obj";MESH:"cow";POS:1,-1;
+OBJ:ID:"5";MODEL:"./obj/box/truck.obj";MESH:"truck";POS:.4,-.5;
+OBJ:ID:"6";MODEL:"./obj/box/table.obj";MESH:"table";POS:.0,1;
 RULE_NUM:1;
-RULE:"1":"STOP"=>"2":"MOVE";
+RULE:"2":"MOVE"=>"1":"MOVE";
