@@ -5,9 +5,20 @@ import pyglet;
 from pyglet.window import key;
 import ratcave as rc;
 
-window = pyglet.window.Window()
+window = pyglet.window.Window(width=300, height=300,caption='Fullscreen')
+#window.set_fullscreen(fullscreen=True, width=800, height=800)
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
+
+#---------- take screenshot --------
+times = 0;
+@window.event
+def take_screenshot(dt):
+    """ takes a screenshot of the client size and saves the image """
+    global times;times+=1;
+    if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
+pyglet.clock.schedule(take_screenshot)
+
 
 #============== write your helper funcs here ==============
 def give_color_by_temp(temp):
