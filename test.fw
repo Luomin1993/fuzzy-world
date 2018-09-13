@@ -1,0 +1,7 @@
+WORLD_NAME:World Name;
+WORLD_SIZE:44;
+OBJ_NUM:2;
+OBJ:ID:"1";MODEL:"/usr/local/lib/python2.7/dist-packages/ratcave/../assets/primitives.obj";MESH:"Monkey";POS:0,-1.2;
+OBJ:ID:"2";MODEL:"/usr/local/lib/python2.7/dist-packages/ratcave/../assets/primitives.obj";MESH:"Torus";POS:-.3,-1.2;
+RULE_NUM:1;
+RULE:"1":"STOP"=>"2":"MOVE";
