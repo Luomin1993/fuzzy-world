@@ -4,20 +4,39 @@ import re;
 import pyglet;
 from pyglet.window import key;
 import ratcave as rc;
+from PIL import Image;
+import cv2 as cv;
+from scipy.ndimage import filters;
 
-window = pyglet.window.Window(width=300, height=300,caption='Fullscreen')
+window = pyglet.window.Window(width=256, height=256,caption='Fullscreen')
+window.set_location(555, 333)
 #window.set_fullscreen(fullscreen=True, width=800, height=800)
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
-#---------- take screenshot --------
-times = 0;
-@window.event
-def take_screenshot(dt):
-    """ takes a screenshot of the client size and saves the image """
-    global times;times+=1;
-    if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
-pyglet.clock.schedule(take_screenshot)
+#============= take screenshot ==============
+# times = 0;
+# @window.event
+# def take_screenshot(dt):
+#     """ takes a screenshot of the client size and saves the image """
+#     global times;times+=1;
+#     if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
+# pyglet.clock.schedule(take_screenshot);
+
+
+#============ give filter show ====================
+# def take_filter(dt):
+#     """ give filter show of saved images """
+#     global times;
+#     if times == 0 or times ==10:return;
+#     if times%10==0: 
+#         im   = np.array(Image.open('img/screenshot'+str(times-10)+'.png').convert('L'));
+#         imx  = np.zeros(im.shape);filters.sobel(im,1,imx);
+#         imy  = np.zeros(im.shape);filters.sobel(im,0,imy);
+#         imxy = np.sqrt(imx**2+imy**2);
+#         Image.fromarray( np.append(np.append(imx,imy,axis=1),imxy,axis=1)  ).convert('RGB').save('img_filter/f'+str(times)+'.jpg');
+#         cv.imshow('time',cv.imread('img_filter/f'+str(times)+'.jpg'));cv.waitKey(52);
+# pyglet.clock.schedule(take_filter);
 
 
 #============== write your helper funcs here ==============
