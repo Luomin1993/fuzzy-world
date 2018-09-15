@@ -123,7 +123,9 @@ ACTION = {"DO_NOTHING":action_donothing,
           "MOVE_FORWARD":action_move_forward,
           "MOVE_BACK":action_move_back,
           "STOP":set_state_stop,
-          "MOVE":set_state_move};
+          "MOVE":set_state_move,
+          "TEMP_HIGH":set_state_temphigh,
+          "TEMP_NORMAL":set_state_tempnormal};
           #"MOVE_LEFT":action_move_left,
           #"MOVE_RIGHT":action_move_right,
           #"TURN_LEFT":action_turn_left,
@@ -194,8 +196,6 @@ class World(object):
             self.scene.meshes = [i.mesh for i in self.objs];
             print 'ok'
             self.scene.draw()      
-
-
 
 class Agent(object):
     """The agent in the fworld"""
@@ -279,7 +279,7 @@ agent = Agent();
 def agent_act(dt):
     global time_passed,agent;
     time_passed+=dt;print time_passed;
-    if time_passed>4:agent.do_action("MOVE",2);
+    if time_passed>4:agent.do_action("MOVE",2);agent.do_action("TEMP_HIGH",2);
 pyglet.clock.schedule(agent_act)
 
 @window.event
@@ -288,4 +288,4 @@ def on_draw():
     with rc.default_shader:
         world.scene.draw()
 
-pyglet.app.run();           
+pyglet.app.run();
