@@ -21,7 +21,7 @@ def make_world(index):
         objs.append(global_objs[np.random.randint(low=0, high=len(global_objs))]);
     #------ make pos in the world ------------
     x = [-1,-0.5,0,0.5,1];
-    y = [0,0.5,1];
+    y = [-1,-0.5,0];
     poses = [];
     poses_in = [];
     for i in range(len(objs)):
@@ -49,7 +49,7 @@ def make_world(index):
         f.write( 'OBJ:ID:"'+str(i)+'";MODEL:"./obj/box/'+objs[i]+'.obj";MESH:"'+objs[i]+'";POS:'+str(poses[i][0])+','+str(poses[i][1])+';TEMP:"TEMP_NORMAL";MOVE:"STOP";\n' );
     f.write( 'RULE_NUM:'+str(len(rules))+';\n' )
     for i in range(len(rules)):
-        f.write( 'RULE:"'+str(objs[rules[i][0]])+'":"'+str(global_states[rules[i][1]])+'"=>"'+str(objs[rules[i][2]])+'":"'+str(global_states[rules[i][3]])+'";\n' );    
+        f.write( 'RULE:"'+str(rules[i][0])+'":"'+str(global_states[rules[i][1]])+'"=>"'+str(rules[i][2])+'":"'+str(global_states[rules[i][3]])+'";\n' );    
     f.close();
 
 if __name__ == '__main__':
