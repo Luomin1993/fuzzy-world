@@ -8,11 +8,11 @@ from PIL import Image;
 import cv2 as cv;
 from scipy.ndimage import filters;
 
-window = pyglet.window.Window(width=256, height=256,caption='Fullscreen')
-window.set_location(555, 333)
-#window.set_fullscreen(fullscreen=True, width=800, height=800)
-keys = key.KeyStateHandler()
-window.push_handlers(keys)
+window = pyglet.window.Window(width=256, height=256,caption='Fullscreen');
+window.set_location(555, 333);
+#window.set_fullscreen(fullscreen=True, width=800, height=800);
+keys = key.KeyStateHandler();
+window.push_handlers(keys);
 
 #============= take screenshot ==============
 # times = 0;
@@ -62,7 +62,10 @@ def is_state_turnoff(obj):
 def is_state_temphigh(obj):
     return obj.temp == 'TEMP_HIGH';    
 
-STATE_JUDGE = {"STOP":is_state_stop,"MOVE":is_state_move,"TURN_ON":is_state_turnon,"TURN_OFF":is_state_turnoff,"TEMP_HIGH":is_state_temphigh};
+def is_state_tempnormal(obj):
+    return obj.temp == 'TEMP_NORMAL';
+
+STATE_JUDGE = {"STOP":is_state_stop,"MOVE":is_state_move,"TURN_ON":is_state_turnon,"TURN_OFF":is_state_turnoff,"TEMP_HIGH":is_state_temphigh,"TEMP_NORMAL":is_state_tempnormal};
 
 #================== set STATE ==============
 def set_state_stop(obj):
@@ -79,7 +82,13 @@ def set_state_turnoff(obj):
     if not obj.is_switch:return obj;
     obj.turnon = 'TURN_OFF';return obj;
 
-STATE_SET = {"STOP":set_state_stop,"MOVE":set_state_move,"TURN_ON":set_state_turnon,"TURN_OFF":set_state_turnoff};
+def set_state_temphigh(obj):
+    obj.temp = 'TEMP_HIGH';return obj;
+
+def set_state_tempnormal(obj):
+    obj.temp = 'TEMP_NORMAL';return obj;    
+
+STATE_SET = {"STOP":set_state_stop,"MOVE":set_state_move,"TURN_ON":set_state_turnon,"TURN_OFF":set_state_turnoff,"TEMP_HIGH":set_state_temphigh,"TEMP_NORMAL":set_state_tempnormal};
 
 #================== STATE implementation ======================
 def state_stop(obj,dt):
@@ -122,16 +131,15 @@ ACTION = {"DO_NOTHING":action_donothing,
 
 class Obj_Attr(object):
     """The Attributes of the object in world"""
-    def __init__(self,mesh,position,move_speed,rot_speed,material_id,is_switch=False,turn_on='TURN_OFF'):
+    def __init__(self,mesh,position,move,temp,material_id,is_switch=False,turn_on='TURN_OFF'):
         super(Obj_Attr, self).__init__()
         self.mesh         =          mesh;
         self.position     =      position;
-        self.move         =        'STOP';
-        self.rot_speed    =     rot_speed;
+        self.move         =          move;
+        self.temp         =          temp;  
         self.material_id  =   material_id;
         self.is_switch    =     is_switch;
         self.turnon       =       turn_on;
-        self.temp         = 'TEMP_NORMAL';  
 
 
 class World(object):
@@ -167,12 +175,12 @@ class World(object):
         return ( (state_1[1],int(state_1[0]) ) ,(state_2[1],int(state_2[0]) ) );
 
     def resolve_obj(self,line):
-        (ID,model,mesh,pos) = re.match(r'OBJ:ID:"(.*)";MODEL:"(.*)";MESH:"(.*)";POS:(.*);',line).groups();
+        (ID,model,mesh,pos,temp,move) = re.match(r'OBJ:ID:"(.*)";MODEL:"(.*)";MESH:"(.*)";POS:(.*);TEMP:"(.*)";MOVE:"(.*)";',line).groups();
         #print (ID,model,mesh,pos);
         pos = pos.split(',');pos=[float(i) for i in pos];
         entity = rc.WavefrontReader(model).get_mesh(mesh,position=(pos[0], -.1,pos[1]), scale=.1, rotation=(0, 0, 0));
         #entity.uniforms['diffuse'] = 1, 1, 0 #give color;
-        return Obj_Attr( entity,pos,0,0,0);
+        return Obj_Attr(entity,pos,move,temp,0);
 
     def make_world_to_fw(self,fw_path):
         pass;
