@@ -323,7 +323,17 @@ def make_tasks():
     total_task_queue = Queue.Queue();
     for act in ['STOP','MOVE','TEMP_HIGH','TEMP_NORMAL']:
         for obj in world.objs:
-            total_task_queue.put('go to '+ act +' the '+ obj.name +' at ('+ str(obj.position[0]) +','+ str(obj.position[1]) +')";')
+            total_task_queue.put('go to '+ act +' the '+ obj.name +' at ('+ str(obj.position[0]) +','+ str(obj.position[1]) +');')
+    return total_task_queue;        
+
+Actions = ['STOP','MOVE','TEMP_HIGH','TEMP_NORMAL'];
+#--- make many tasks:include repeat tasks ----------
+def make_many_tasks(TASK_NUM):
+    total_task_queue = Queue.Queue();
+    for i in range(TASK_NUM):
+        act = Actions[ np.random.randint(low=0,high=len(Actions)) ];
+        obj = world.objs[ np.random.randint(low=0,high=len(world.objs)) ];
+        total_task_queue.put('go to '+ act +' the '+ obj.name +' at ('+ str(obj.position[0]) +','+ str(obj.position[1]) +');');
     return total_task_queue;        
 
 
@@ -341,24 +351,35 @@ def give_detail_steps(pos_now,command):
         if obj_en.name==obj and obj_en.position[0]==pos_x and obj_en.position[1]==pos_z :
             obj_id = world.objs.index(obj_en);
     task_queue.put((action,obj_id));
-
+                           
 step_id = 0;
-action_record = [];
-total_task_queue = make_tasks();
+action_record  = [];
+command_record = [];
+command = "nothing"; #init the command;
+#total_task_queue = make_tasks();
+total_task_queue = make_many_tasks(100);
 def make_data(dt):
-    global time_passed,agent,task_queue,action_record,step_id;
-    time_passed+=dt;step_id+=1; # agent.do_action("MOVE",2);agent.do_action("TEMP_HIGH",2);
+    global time_passed,agent,task_queue,command_record,action_record,step_id,command;
+    time_passed+=dt; # agent.do_action("MOVE",2);agent.do_action("TEMP_HIGH",2);
     if task_queue.empty():
         if not total_task_queue.empty():
-            give_detail_steps(world.scene.camera.position,total_task_queue.get());
+            command = total_task_queue.get();
+            give_detail_steps(world.scene.camera.position,command);
         else:end_scene();    
-    else:take_screenshot(step_id);action = task_queue.get();agent.do_action(action[0],action[1]);action_record.append(action);
+    else:take_screenshot(step_id);action = task_queue.get();agent.do_action(action[0],action[1]);action_record.append(action);command_record.append(command);step_id+=1;
 pyglet.clock.schedule(make_data)
 
 #======== kill the world , save data and quit ==========
 def end_scene():
-    f=open('img_train/act.txt','w');
+    f=open('img_train/Actions.act','w');
+    #------- Write actions into File -------
     for line in action_record:
+        f.write( str(line)+'\n'   );
+    f.close();
+    window.close();
+    f=open('img_train/Commands.cm','w');
+    #------- Write commands into File -------
+    for line in command_record:
         f.write( str(line)+'\n'   );
     f.close();
     window.close();
