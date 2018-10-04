@@ -332,7 +332,7 @@ def make_many_tasks(TASK_NUM):
     total_task_queue = Queue.Queue();
     for i in range(TASK_NUM):
         act = Actions[ np.random.randint(low=0,high=len(Actions)) ];
-        obj = world.objs[ np.random.randint(low=0,high=len(world.objs)) ];
+        obj = world.objs[ np.random.randint(low=1,high=len(world.objs)) ];
         total_task_queue.put('go to '+ act +' the '+ obj.name +' at ('+ str(obj.position[0]) +','+ str(obj.position[1]) +');');
     return total_task_queue;        
 
