@@ -150,15 +150,21 @@ class State(object):
     def make_feature_vec(self):
         d_o = len(Globle_Objects);
         d_p = len(Globle_Predicates);
-        Mat = np.zeros((d_o,d_o,d_p));
+        self.Mat = np.zeros((d_o,d_o,d_p));
         for pair in self.obj_att:
             pair_str = self.objects[pair[0]] + ' is ' + self.attributes[pair[1]];
             self.states_describe.append(pair_str);
         for pair in self.obj_pre:
             pair_str = self.objects[pair[0]] + ' '+ self.predicates[pair[1]] +' ' + self.objects[pair[2]];
             self.states_describe.append(pair_str);
-        print self.states_describe;                
-
+        # print self.states_describe;                
+        # 'bed is TEMP_NORMAL', 'bed is STOP', 'jeep LEFT music', 'music RIGHT jeep', 'jeep BIGGER music',... ...
+        for state in self.states_describe:
+            state = state.split(' ');
+            #self.Mat[Globle_Objects.index(state[0])] = 1.;
+            #self.Mat[Globle_Objects.index(state[0])][Globle_Objects.index(state[2])] = 1.;
+            self.Mat[Globle_Objects.index(state[0])][Globle_Objects.index(state[2])][Globle_Predicates.index(state[1])] = 1.;
+        return self.Mat;
 
     def visualize(self):
         pass;    
