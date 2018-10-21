@@ -10,9 +10,9 @@ The Recognization Logic Of the Fuzzy World:
 """
 
 #========= Globle :For One-Hot Vector Making =========
-Globle_Objects    = ['jeep', 'music', 'bed', 'cow', 'bed', 'table', 'truck', 'chair', 'tree', 'horse', 'TEMP_NORMAL','TEMP_HIGH','STOP','MOVE'];
-Globle_Predicates = ['is','LEFT','RIGHT','FRONT','BEHIND','BIGGER','SMALLER'];
-
+Globle_Objects      = ['jeep', 'music', 'bed', 'cow', 'bed', 'table', 'truck', 'chair', 'tree', 'horse', 'TEMP_NORMAL','TEMP_HIGH','STOP','MOVE'];
+Globle_Predicates   = ['is','LEFT','RIGHT','FRONT','BEHIND','BIGGER','SMALLER'];
+Globle_Antagonistic = {'TEMP_NORMAL':'TEMP_HIGH','TEMP_HIGH':'TEMP_NORMAL','STOP':'MOVE','MOVE':'STOP'};
 
 #========= Compare the Size of Two Objs ==============
 def read_obj_size(name):
@@ -166,6 +166,13 @@ class State(object):
             self.Mat[Globle_Objects.index(state[0])][Globle_Objects.index(state[2])][Globle_Predicates.index(state[1])] = 1.;
         return self.Mat;
 
+    def make_change(self,obj,att):    
+        state = obj + ' is ' + att;
+        if state in self.states_describe:return;
+        state_anta = obj + ' is ' + Globle_Antagonistic[att];
+        del( self.states_describe[ self.states_describe.index(state_anta) ]);
+        self.states_describe.append(state);
+
     def visualize(self):
         pass;    
 
@@ -176,19 +183,37 @@ class Inference(object):
         self.name   = name;
         self.globle_state = State(name);
         self.events = None;
+        self.Mat    = None;
 
     def build_from_fw(self,file_name):
         self.globle_state.build_from_fw(file_name);
         self.events = self.globle_state.events;
+        # print self.events;
     
     def make_feature_vec(self):
-        pass;
+        self.Mat = np.zeros((len(self.events),len(Globle_Objects)*2));
+        for i in range(len(self.events)):
+            pair = self.events[i];
+            pair_str = [];
+            pair_str.append(self.globle_state.objects[pair[0][0]]);
+            pair_str.append(self.globle_state.attributes[pair[0][1]]);
+            pair_str.append(self.globle_state.objects[pair[1][0]]);
+            pair_str.append(self.globle_state.attributes[pair[1][1]]);
+            self.Mat[i][Globle_Objects.index(pair_str[0])]                     = 1.;
+            self.Mat[i][Globle_Objects.index(pair_str[1])]                     = 1.;
+            self.Mat[i][Globle_Objects.index(pair_str[0])+len(Globle_Objects)] = 1.;
+            self.Mat[i][Globle_Objects.index(pair_str[1])+len(Globle_Objects)] = 1.;
+        #print self.Mat;    
+        return self.Mat;
 
     def visualize(self):
         pass;                            
 
 if __name__ == '__main__':
-    state = State('Gs');
-    state.build_from_fw('sample_1.fw');        
-    state.make_feature_vec();
+    # state = State('Gs');
+    # state.build_from_fw('sample_1.fw');        
+    # state.make_feature_vec();
     # print read_obj_size('tree');
+    infer = Inference('GI');
+    infer.build_from_fw('sample_1.fw');
+    infer.make_feature_vec();
