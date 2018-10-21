@@ -243,7 +243,6 @@ class Teacher(object):
         super(Teacher, self).__init__()
         self.name = None;
         
-        
 
 world = World();
 world.make_world_from_fw('sample_1.fw');
@@ -395,7 +394,8 @@ def make_data(dt):
         action = task_queue.get();
         agent.do_action(action[0],action[1]);
         make_change(action[0],action[1]);
-        action_record.append(action);
+        if action[0] in Moves:action_record.append(action);
+        else:action_record.append((action[0],world.objs[action[1]].name.replace('./obj/box/','').replace('.obj','')));
         command_record.append(command);
         GS_record.append(G_S.make_feature_vec());
         step_id+=1;
