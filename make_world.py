@@ -13,15 +13,19 @@ print np.random.randint(low=5, high=10, size=3)
 
 '''make fuzzy-world map based on finite objs and rules'''
 def make_world(index):
-    global_objs   = ['horse','bed','jeep','sw_pipe','music','cow'];
+    global_objs   = ['horse','bed','jeep','sw_pipe','music','cow','table','chair','truck'];
     global_states = ['TEMP_NORMAL','TEMP_HIGH','MOVE','STOP'];
     #------ pick objs in the world -----------
     objs = [];
-    for i in range(5):
-        objs.append(global_objs[np.random.randint(low=0, high=len(global_objs))]);
+    while(True):
+        obj = global_objs[np.random.randint(low=0, high=len(global_objs))];
+        if obj not in objs:objs.append(obj);
+        if len(objs)==5:break;
     #------ make pos in the world ------------
-    x = [-1,-0.5,0,0.5,1];
-    y = [-1,-0.5,0];
+    # x = [-1,-0.5,0,0.5,1];
+    # y = [-1,-0.5,0];
+    x = [-1.5,-0.75,0,0.75,1.5];
+    y = [-1.5,-0.75,0,0.75];
     poses = [];
     poses_in = [];
     for i in range(len(objs)):

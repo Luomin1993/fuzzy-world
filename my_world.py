@@ -18,28 +18,28 @@ keys = key.KeyStateHandler();
 window.push_handlers(keys);
 
 #============= take screenshot ==============
-times = 0;
-@window.event
-def take_screenshot(dt):
-    """ takes a screenshot of the client size and saves the image """
-    global times;times+=1;
-    if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
-pyglet.clock.schedule(take_screenshot);
+# times = 0;
+# @window.event
+# def take_screenshot(dt):
+#     """ takes a screenshot of the client size and saves the image """
+#     global times;times+=1;
+#     if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
+# pyglet.clock.schedule(take_screenshot);
 
 
 #============ give filter show ====================
-def take_filter(dt):
-    """ give filter show of saved images """
-    global times;
-    if times == 0 or times ==10:return;
-    if times%10==0: 
-        im   = np.array(Image.open('img/screenshot'+str(times-10)+'.png').convert('L'));
-        imx  = np.zeros(im.shape);filters.sobel(im,1,imx);
-        imy  = np.zeros(im.shape);filters.sobel(im,0,imy);
-        imxy = np.sqrt(imx**2+imy**2);
-        Image.fromarray( np.append(np.append(imx,imy,axis=1),imxy,axis=1)  ).convert('RGB').save('img_filter/f'+str(times)+'.jpg');
-        cv.imshow('time',cv.imread('img_filter/f'+str(times)+'.jpg'));cv.waitKey(52);
-pyglet.clock.schedule(take_filter);
+# def take_filter(dt):
+#     """ give filter show of saved images """
+#     global times;
+#     if times == 0 or times ==10:return;
+#     if times%10==0: 
+#         im   = np.array(Image.open('img/screenshot'+str(times-10)+'.png').convert('L'));
+#         imx  = np.zeros(im.shape);filters.sobel(im,1,imx);
+#         imy  = np.zeros(im.shape);filters.sobel(im,0,imy);
+#         imxy = np.sqrt(imx**2+imy**2);
+#         Image.fromarray( np.append(np.append(imx,imy,axis=1),imxy,axis=1)  ).convert('RGB').save('img_filter/f'+str(times)+'.jpg');
+#         cv.imshow('time',cv.imread('img_filter/f'+str(times)+'.jpg'));cv.waitKey(52);
+# pyglet.clock.schedule(take_filter);
 
 
 #============== write your helper funcs here ==============
@@ -165,7 +165,7 @@ class World(object):
         self.name     = re.match(r'WORLD_NAME:(.*);',f.readline()).groups()[0];
         self.size     = int(re.match(r'WORLD_SIZE:(.*);',f.readline()).groups()[0]);
         self.objs_num = int(re.match(r'OBJ_NUM:(.*);',f.readline()).groups()[0]);
-        self.objs.append(Obj_Attr( rc.WavefrontReader('obj/box/box.obj').get_mesh("box",position=(0, -.1, -1.5), scale=.03*self.size/32, rotation=(0, -90, 0)),
+        self.objs.append(Obj_Attr( rc.WavefrontReader('obj/box/box.obj').get_mesh("box",position=(0, -.1, -1.5), scale=.03*self.size/20, rotation=(0, -90, 0)),
                          (0,0),0,0,0)); # add floor;
         for i in range(self.objs_num):
             self.objs.append(self.resolve_obj( f.readline() ));
@@ -224,6 +224,8 @@ class Teacher(object):
 
 world = World();
 world.make_world_from_fw('sample_1.fw');
+world.scene.camera.position.y += 0.2; 
+world.scene.camera.rotation.x -= 40;
 world.scene.meshes = [i.mesh for i in world.objs];
 #print len(world.objs);
 #print 'ok'
@@ -286,21 +288,21 @@ def draw_dynamic():
 time_passed = 0;
 agent = Agent();
 #--- plot context ---
-fig=plt.figure();
-ax=fig.add_subplot(1,1,1);
-ax.axis("equal");
-plt.grid(True);
-plt.ion();
+# fig=plt.figure();
+# ax=fig.add_subplot(1,1,1);
+# ax.axis("equal");
+# plt.grid(True);
+# plt.ion();
 #--- report context ---      
 # print('\033[1;33;44m If the torus is stopped then the monkey can move \033[0m')
 def agent_act(dt):
     global time_passed,agent;
     loss_1=np.sin(time_passed);loss_2=np.cos(time_passed);loss_3=np.tan(time_passed);
-    print('\033STEP:\033[0m  '+str(time_passed)+' \033[0;31m Loss: \033[0m'+str(loss_1)+' \033[0;31m Loss: \033[0m'+str(loss_2)+' \033[0;31m Loss: \033[0m'+str(loss_3)) 
-    ax.scatter(time_passed,loss_1,c='b',marker='.')  #散点图
-    plt.pause(0.001)
+    #print(' \033[0;31m STEP: \033[0m  '+str(time_passed)+' \033[0;31m Loss: \033[0m'+str(loss_1)+' \033[0;31m Loss: \033[0m'+str(loss_2)+' \033[0;31m Loss: \033[0m'+str(loss_3)) 
+    #ax.scatter(time_passed,loss_1,c='b',marker='.')  #散点图
+    #plt.pause(0.001)
     time_passed+=dt;#print time_passed;
-    if time_passed>4:agent.do_action("MOVE",2);agent.do_action("TEMP_HIGH",2);
+    #if time_passed>4:agent.do_action("MOVE",2);agent.do_action("TEMP_HIGH",2);
 pyglet.clock.schedule(agent_act)
 
 @window.event
