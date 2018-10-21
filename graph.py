@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np;
 import re;
+import matplotlib.pyplot as plt
+import networkx as nx
+
 
 """
 The Recognization Logic Of the Fuzzy World:
@@ -10,7 +13,7 @@ The Recognization Logic Of the Fuzzy World:
 """
 
 #========= Globle :For One-Hot Vector Making =========
-Globle_Objects      = ['jeep', 'music', 'bed', 'cow', 'bed', 'table', 'truck', 'chair', 'tree', 'horse', 'TEMP_NORMAL','TEMP_HIGH','STOP','MOVE'];
+Globle_Objects      = ['jeep', 'music', 'bed', 'cow', 'bed', 'table', 'truck', 'chair', 'tree', 'horse','sw_pipe', 'TEMP_NORMAL','TEMP_HIGH','STOP','MOVE'];
 Globle_Predicates   = ['is','LEFT','RIGHT','FRONT','BEHIND','BIGGER','SMALLER'];
 Globle_Antagonistic = {'TEMP_NORMAL':'TEMP_HIGH','TEMP_HIGH':'TEMP_NORMAL','STOP':'MOVE','MOVE':'STOP'};
 
@@ -174,7 +177,30 @@ class State(object):
         self.states_describe.append(state);
 
     def visualize(self):
-        pass;    
+        G = nx.DiGraph();
+        attributes = [];
+        for edge in self.obj_pre:
+            point_0 = self.objects[edge[0]];
+            point_1 = self.predicates[edge[1]];
+            point_2 = self.objects[edge[2]];
+            G.add_edge(point_0, point_1,weight=0.4);
+            G.add_edge(point_1, point_2,weight=0.4);
+        for pair in self.obj_att:
+            G.add_edge(self.objects[pair[0]],self.attributes[pair[1]],weight=0.2);
+            attributes.append(self.attributes[pair[1]]);
+        pos = nx.spring_layout(G);    
+        # nodes
+        nx.draw_networkx_nodes(G, pos, nodelist=self.predicates,node_size=1400,node_color='r',node_shape='^');
+        nx.draw_networkx_nodes(G, pos, nodelist=self.objects,node_size=1000,node_color='b');
+        nx.draw_networkx_nodes(G, pos, nodelist=attributes,node_size=1200,node_color='g',node_shape='>');
+        # edges
+        nx.draw_networkx_edges(G, pos, style='dashed',arrowsize=13.2,edge_cmap=plt.cm.Blues, width=2,arrows=False);
+        # labels
+        nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif');
+        plt.axis('off');
+        #plt.show();
+        plt.savefig("G_s.jpg");
+        plt.close('all');
 
 class Inference(object):
     """docstring for Inference"""
@@ -207,13 +233,44 @@ class Inference(object):
         return self.Mat;
 
     def visualize(self):
-        pass;                            
+        # [((0, 2), (1, 0)), ((4, 3), (2, 3)), ((0, 1), (4, 0)), ((2, 0), (4, 1))];
+        G = nx.DiGraph();
+        att = [];objs=[];
+        for logic in self.events:
+            obj_1 = self.globle_state.objects[logic[0][0]];
+            obj_2 = self.globle_state.objects[logic[1][0]];
+            att_1 = self.globle_state.attributes[logic[0][1]];
+            att_2 = self.globle_state.attributes[logic[1][1]];
+            if att_1 not in att:att.append(att_1);
+            if att_2 not in att:att.append(att_2);            
+            if obj_1 not in objs:objs.append(obj_1);
+            if obj_2 not in objs:objs.append(obj_2);            
+            G.add_edge(obj_1, att_1,weight=0.4);
+            G.add_edge(obj_2, att_2,weight=0.4);
+            G.add_edge(obj_1, obj_2,weight=0.6);
+        pos = nx.spring_layout(G);    
+        eatt=[(u,v) for (u,v,d) in G.edges(data=True) if d['weight'] <0.5]
+        einf=[(u,v) for (u,v,d) in G.edges(data=True) if d['weight'] >0.5]
+        # nodes
+        nx.draw_networkx_nodes(G, pos, nodelist=att,node_size=1400,node_color='r',node_shape='^');
+        nx.draw_networkx_nodes(G, pos, nodelist=objs,node_size=1000,node_color='b');
+        # edges
+        nx.draw_networkx_edges(G, pos, edgelist=eatt,style='dashed',arrowsize=13.2,edge_cmap=plt.cm.Blues, width=2,arrows=False);
+        nx.draw_networkx_edges(G, pos, edgelist=einf,arrowsize=13.2,edge_cmap=plt.cm.Blues, width=5);
+        # labels
+        nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif');
+        plt.axis('off');
+        #plt.show();
+        plt.savefig("G_I.jpg");
+        plt.close('all');
 
 if __name__ == '__main__':
     # state = State('Gs');
     # state.build_from_fw('sample_1.fw');        
     # state.make_feature_vec();
+    # state.visualize();
     # print read_obj_size('tree');
     infer = Inference('GI');
     infer.build_from_fw('sample_1.fw');
     infer.make_feature_vec();
+    infer.visualize();

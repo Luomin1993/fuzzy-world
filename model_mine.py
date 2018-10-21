@@ -31,6 +31,7 @@ def mean_pred(y_true, y_pred):
 # ========= read your dataset here ================
 data_l      = np.load('DatGraph/DATA_CM.npy');
 data_a      = np.load('DatGraph/DATA_ACT.npy');
+data_q      = np.load('DatGraph/DATA_QV.npy');
 data_o      = np.load('DatGraph/DATA_IMG.npy').astype('float32');
 data_o      = np.reshape(data_o, (len(data_o), 64,64,1))
 data_Gi     = np.load('DatGraph/G_I.npy');
@@ -102,10 +103,11 @@ L      = Dense(ACT_OUT_DIM, activation='relu')(l_in);
 h_a    = Dense(ACT_OUT_DIM, activation='relu')(h_a);
 h_a    = Add()([h_a,L]);
 A_out  = Dense(ACT_OUT_DIM, activation='relu')(h_a);
+Q_out  = Dense(ACT_OUT_DIM, activation='relu')(h_a);
 
 
 
-model  = Model(inputs=[Gs_in,Gi_in,l_in,o_in,Gs_in_], outputs=[A_out,R_S,I_G]);
+model  = Model(inputs=[Gs_in,Gi_in,l_in,o_in,Gs_in_], outputs=[A_out,R_S,I_G,Q_out]);
 sgd    = optimizers.SGD(lr=0.00001, decay=0.0, momentum=0.9, nesterov=True);
 model.compile(optimizer=sgd, loss=losses.mean_squared_error, metrics=['accuracy']);
 
@@ -116,7 +118,7 @@ model.compile(optimizer=sgd, loss=losses.mean_squared_error, metrics=['accuracy'
 #    if model.layers[i].name=='emb_1':print i;
 #history = LossHistory();
 #model.summary();
-model.fit([data_Gs,data_Gi,data_l,data_o,data_Gs_], [data_a,data_Gs,data_Gi],epochs=2, batch_size=10);
+model.fit([data_Gs,data_Gi,data_l,data_o,data_Gs_], [data_a,data_Gs,data_Gi,data_q],epochs=12, batch_size=5);
 #from keras.utils import plot_model
 #plot_model(model, to_file='model.png')
 #绘制acc-loss曲线
