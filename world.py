@@ -8,13 +8,26 @@ from PIL import Image;
 import cv2 as cv;
 from scipy.ndimage import filters;
 
+<<<<<<< HEAD
+window = pyglet.window.Window(width=400, height=400,caption='Fullscreen');
+=======
 window = pyglet.window.Window(width=256, height=256,caption='Fullscreen');
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 window.set_location(555, 333);
 #window.set_fullscreen(fullscreen=True, width=800, height=800);
 keys = key.KeyStateHandler();
 window.push_handlers(keys);
 
 #============= take screenshot ==============
+<<<<<<< HEAD
+times = 0;
+@window.event
+def take_screenshot(dt):
+    """ takes a screenshot of the client size and saves the image """
+    global times;times+=1;
+    if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
+pyglet.clock.schedule(take_screenshot);
+=======
 # times = 0;
 # @window.event
 # def take_screenshot(dt):
@@ -22,6 +35,7 @@ window.push_handlers(keys);
 #     global times;times+=1;
 #     if times%10==0:pyglet.image.get_buffer_manager().get_color_buffer().save('img/screenshot'+str(times)+'.png');
 # pyglet.clock.schedule(take_screenshot);
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 
 
 #============ give filter show ====================
@@ -162,7 +176,11 @@ class World(object):
         self.name     = re.match(r'WORLD_NAME:(.*);',f.readline()).groups()[0];
         self.size     = int(re.match(r'WORLD_SIZE:(.*);',f.readline()).groups()[0]);
         self.objs_num = int(re.match(r'OBJ_NUM:(.*);',f.readline()).groups()[0]);
+<<<<<<< HEAD
+        self.objs.append(Obj_Attr( rc.WavefrontReader('obj/box/box.obj').get_mesh("box",position=(0, -.1, -1.5), scale=.03*self.size/22, rotation=(0, -90, 0)),
+=======
         self.objs.append(Obj_Attr( rc.WavefrontReader('obj/box/box.obj').get_mesh("box",position=(0, -.1, -1.5), scale=.03*self.size/32, rotation=(0, -90, 0)),
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
                          (0,0),0,0,0)); # add floor;
         for i in range(self.objs_num):
             self.objs.append(self.resolve_obj( f.readline() ));
@@ -220,7 +238,11 @@ class Teacher(object):
         
 
 world = World();
+<<<<<<< HEAD
+world.make_world_from_fw('sample_1.fw');
+=======
 world.make_world_from_fw('test.fw');
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 world.scene.meshes = [i.mesh for i in world.objs];
 #print len(world.objs);
 #print 'ok'

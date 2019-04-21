@@ -12,7 +12,11 @@ print np.random.randint(low=5, high=10, size=3)
 '''
 
 '''make fuzzy-world map based on finite objs and rules'''
+<<<<<<< HEAD
+def make_world(path,index):
+=======
 def make_world(index):
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
     global_objs   = ['horse','bed','jeep','sw_pipe','music','cow','table','chair','truck'];
     global_states = ['TEMP_NORMAL','TEMP_HIGH','MOVE','STOP'];
     #------ pick objs in the world -----------
@@ -45,7 +49,11 @@ def make_world(index):
                 rules.append((id_1,state_1,id_2,state_2));break;#print rules[-1];
             else:continue;
     #------ write into file ------
+<<<<<<< HEAD
+    f = open(path+'/sample_'+str(index)+'.fw', 'w');
+=======
     f = open('sample_'+str(index)+'.fw', 'w');
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
     f.write( 'WORLD_NAME:sam'+str(index)+';\n'   );
     f.write( 'WORLD_SIZE:44;\n' );
     f.write( 'OBJ_NUM:'+str(len(objs))+';\n');
@@ -57,4 +65,8 @@ def make_world(index):
     f.close();
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     make_world(1);        
+=======
+    make_world(1);        
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
