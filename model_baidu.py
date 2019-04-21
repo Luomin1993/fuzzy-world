@@ -65,10 +65,13 @@ class LossHistory(keras.callbacks.Callback):
 def mean_pred(y_true, y_pred):
     return K.square(y_pred-y_true);    
 
+<<<<<<< HEAD
 # ========= define your task func here ===========
 def task_finish(y_true, y_pred):
     return K.mean(K.greater(K.dot(K.softmax(y_pred), K.transpose(y_true)),.4), axis=-1)    
 
+=======
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 # ========= define your helper data here ==========
 ACTION2WORDS = {};
 WORDS_NUM    = 20;
@@ -104,6 +107,7 @@ C_     = Add()([C_1,C_2]);
 C_     = Dense(144, activation='relu')(C_);
 C_     = Dense(72, activation='relu')(C_); # the output GFT;
 #------ GRU of h_m -------
+<<<<<<< HEAD
 #C_     = Embedding(output_dim=72, input_dim=72, input_length=ACT_STEPS,name = 'emb_1')(C_)
 #h_m    = GRU(units=DIM_hm,return_sequences=True)(C_);
 # h_m = LSTM(72, input_dim=72, input_length=ACT_STEPS, return_sequences=True)();
@@ -112,13 +116,27 @@ h_m = Dense(DIM_hm, activation='relu')(C_);
 #a_last = Embedding(output_dim=32, input_dim=DIM_a, input_length=ACT_STEPS,name = 'emb_2')(a_in)
 #h_a    = GRU(units=DIM_ha)(a_last);
 h_a = Dense(DIM_ha, activation='relu')(a_in);
+=======
+C_     = Embedding(output_dim=72, input_dim=72, input_length=ACT_STEPS,name = 'emb_1')(C_)
+h_m    = GRU(units=DIM_hm,return_sequences=True)(C_);
+# h_m = LSTM(72, input_dim=72, input_length=ACT_STEPS, return_sequences=True)();
+#h_m = Dense(DIM_hm, activation='relu')(C_);
+#------ GRU of h_a -------
+a_last = Embedding(output_dim=32, input_dim=DIM_a, input_length=ACT_STEPS,name = 'emb_2')(a_in)
+h_a    = GRU(units=DIM_ha)(a_last);
+#h_a = Dense(DIM_ha, activation='relu')(a_in);
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 #------ GRU of f ---------
 #f      = concatenate([h_m,h_a]); # the output cat;
 f_1    = Dense(32, activation='relu')(h_a);
 f_2    = Dense(32, activation='relu')(h_m);
 f      = Add()([f_1,f_2]);
 # f      = Embedding(output_dim=32, input_dim=DIM_ha+DIM_hm, input_length=ACT_STEPS)(f)
+<<<<<<< HEAD
 # f      = GRU(units=DIM_f)(f);
+=======
+f      = GRU(units=DIM_f)(f);
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 a_t    = Dense(72, activation='relu')(f);
 a_t    = Dense(36, activation='relu')(a_t);
 a_t    = Dense(DIM_a, activation='relu')(a_t);
@@ -135,10 +153,17 @@ a_t    = Dense(DIM_a, activation='relu')(a_t);
 model  = Model(inputs=[l_in,o_in,a_in], outputs=a_t);
 sgd    = optimizers.SGD(lr=0.00001, decay=0.0, momentum=0.9, nesterov=True);
 model.layers[17].trainable=False;
+<<<<<<< HEAD
 model.compile(optimizer=sgd, loss=losses.mean_squared_error, metrics=[task_finish]);
 
 # ========= read your dataset here ================
 data_l      = np.load('DATA_CM.npy');
+=======
+model.compile(optimizer=sgd, loss=losses.mean_squared_error, metrics=['accuracy', mean_pred]);
+
+# ========= read your dataset here ================
+data_l      =  np.load('DATA_CM.npy');
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 data_a      = np.load('DATA_ACT.npy');
 data_o      = np.load('DATA_IMG.npy').astype('float32');
 data_o = np.reshape(data_o, (len(data_o), DIM_IMG,DIM_IMG,1))
@@ -151,9 +176,14 @@ data_a_last = data_a;data_a_last[1:]=data_a[0:-1];
 #for i in range(len(model.layers)):
 #    if model.layers[i].name=='emb_1':print i;
 #history = LossHistory();
+<<<<<<< HEAD
 #model.summary();
 model.fit([data_l,data_o,data_a_last], data_a,epochs=30, batch_size=5);
 model.save('baidu.h5')
+=======
+model.summary();
+#model.fit([data_l,data_o,data_a_last], data_a,epochs=30, batch_size=10);
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 #from keras.utils import plot_model
 #plot_model(model, to_file='model.png')
 #绘制acc-loss曲线
@@ -172,8 +202,11 @@ def state():
 def cost_func():
     pass;	
 
+<<<<<<< HEAD
 # ========= define regulizer =============
 # from keras import regularizers
 # model.add(Dense(64, input_dim=64,
 #                 kernel_regularizer=regularizers.l2(0.01),
 #                 activity_regularizer=regularizers.l1(0.01)))
+=======
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4

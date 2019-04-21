@@ -176,7 +176,11 @@ class State(object):
         del( self.states_describe[ self.states_describe.index(state_anta) ]);
         self.states_describe.append(state);
 
+<<<<<<< HEAD
     def visualize(self,path):
+=======
+    def visualize(self):
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
         G = nx.DiGraph();
         attributes = [];
         for edge in self.obj_pre:
@@ -199,7 +203,11 @@ class State(object):
         nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif');
         plt.axis('off');
         #plt.show();
+<<<<<<< HEAD
         plt.savefig(path);
+=======
+        plt.savefig("G_s.jpg");
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
         plt.close('all');
 
 class Inference(object):
@@ -232,7 +240,11 @@ class Inference(object):
         #print self.Mat;    
         return self.Mat;
 
+<<<<<<< HEAD
     def visualize(self,path):
+=======
+    def visualize(self):
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
         # [((0, 2), (1, 0)), ((4, 3), (2, 3)), ((0, 1), (4, 0)), ((2, 0), (4, 1))];
         G = nx.DiGraph();
         att = [];objs=[];
@@ -261,7 +273,11 @@ class Inference(object):
         nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif');
         plt.axis('off');
         #plt.show();
+<<<<<<< HEAD
         plt.savefig(path);
+=======
+        plt.savefig("G_I.jpg");
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
         plt.close('all');
 
 if __name__ == '__main__':

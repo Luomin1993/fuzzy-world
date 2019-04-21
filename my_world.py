@@ -11,7 +11,11 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
 
+<<<<<<< HEAD
 window = pyglet.window.Window(width=700, height=700,caption='Fullscreen');
+=======
+window = pyglet.window.Window(width=256, height=256,caption='Fullscreen');
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 window.set_location(555, 333);
 #window.set_fullscreen(fullscreen=True, width=800, height=800);
 keys = key.KeyStateHandler();
@@ -223,7 +227,11 @@ class Teacher(object):
         
 
 world = World();
+<<<<<<< HEAD
 world.make_world_from_fw('gg/sample_11.fw');
+=======
+world.make_world_from_fw('sample_1.fw');
+>>>>>>> 6a669de68de0c32521c67937141f320f8f02f1c4
 world.scene.camera.position.y += 0.2; 
 world.scene.camera.rotation.x -= 40;
 world.scene.meshes = [i.mesh for i in world.objs];
