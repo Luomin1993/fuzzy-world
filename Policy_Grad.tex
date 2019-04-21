@@ -1,0 +1,117 @@
+\def\year{2018}\relax
+%File: formatting-instruction.tex
+\documentclass[letterpaper]{article} %DO NOT CHANGE THIS
+\usepackage{aaai18}  %Required
+\usepackage{times}  %Required
+\usepackage{helvet}  %Required
+\usepackage{courier}  %Required
+\usepackage{url}  %Required
+\usepackage{graphicx}  %Required
+\frenchspacing  %Required
+\setlength{\pdfpagewidth}{8.5in}  %Required
+\setlength{\pdfpageheight}{11in}  %Required
+%PDF Info Is Required:
+  \pdfinfo{
+/Title (2018 Formatting Instructions for Authors Using LaTeX)
+/Author (AAAI Press Staff)}
+\setcounter{secnumdepth}{0}  
+ \begin{document}
+% The file aaai.sty is the style file for AAAI Press 
+% proceedings, working notes, and technical reports.
+%
+\title{Learning Policy Gradient: A Method for Reinforcement Learning}
+\author{AAAI Press\\
+Association for the Advancement of Artificial Intelligence\\
+2275 East Bayshore Road, Suite 160\\
+Palo Alto, California 94303\\
+}
+\maketitle
+\begin{abstract}
+One less addressed issue of deep reinforcement learning is the lack of generalization capability based on new state and new target, for complex tasks, it is necessary to evaluate the correct strategy based on the current state. In this paper we present an approach that can let agent to learn the policy gradient based on the current state and the actions set, by which the agent can learn a policy map with generalization capability. we evaluate the proposed method on the 3D enviroment Fuzzy World compared with the baseline model, detailed experimental results and proofs are also given.
+
+\end{abstract}
+
+
+
+\section{Introduction to DRL}
+In recent years the deep reinforcement learning(DRL) methods haveshown promising results in virtual enviroment tasks and real-world tasks \cite{A1} \cite{A2} \cite{A3}. The study of reinforcement learning is based on the scope of classical physics. The time of the world can be divided into time slices, and there is a complete sequence, which is the series of time series states mentioned above, one of the important assumptions is that each time the parameter adjustment has a deterministic effect on the environment, ie the input is determined and the output is determined.
+
+$$\{s_1,a_1,r_1,s_2,a_2,r_2...\}$$
+
+The Bellman equation \cite{A1} illustrates the relationship between the value function of the current state and the value function of the next state. From a formula perspective, the value of the current state is related to the value of the next step and the current feedback, Reward. It shows that the Value Function can be calculated by iteration, which is the basis for intensive learning:
+
+$$v(s) = \mathbb E[R_{t+1} + \lambda v(S_{t+1})|S_t = s]$$
+
+The Action-value function $Q^\pi(s,a)$ is defined to denote the cumulative reward of strategy $\pi$ starting from state $s$, after performing action $a$:
+
+\begin{align}
+Q^\pi(s,a) & =  \mathbb E[r_{t+1} + \lambda r_{t+2} +\lambda^2r_{t+3} + ... |s,a] \\\\& = \mathbb E_{s^\prime}[r+\lambda Q^\pi(s^\prime,a^\prime)|s,a]
+\end{align}
+
+Q-Learning is based on value iteration. There is virtually no way to traverse all states, and all the actions, but only a limited series of samples. Therefore, only limited samples can be used for operation. A way to update the Q value is proposed in Q-Learning:
+
+$$Q(S_{t},A_{t}) \leftarrow Q(S_{t},A_{t})+\alpha({R_{t+1}+\lambda \max _aQ(S_{t+1},a)} - Q(S_t,A_t))$$
+
+We define $\rho(\pi)$ as the average reward formulation that is useful in the next, in which policies are ranked according to their long-term expected reward per step:
+
+$$\rho(\pi) = \lim_{n \rightarrow \infty} \frac{1}{n} \{r_1+r_2+...+r_n|\pi \}= \sum_{a}d^\pi(s) \sum_a \pi(s,a)R^a_s$$
+
+where the $d^\pi(s)=\lim_{t \rightarrow \infty}Pr(s_t=s|s_0,\pi)$ is the stationary distribution of the all states under policy \pi.
+
+
+
+\section{The Theorem of Policy Gradient}
+The policy gradient $\frac{\partial \pi(s,a)}{\partial \theta}$ is what we wanna the agent to learn because the agent can update the policy based on the new states and targets by which. But first of all establishing the relationship between the policy gradient $\frac{\partial \pi(s,a)}{\partial \theta}$ and the globle value is needed. To address this issue the following theorem is proposed;
+
+\begin{thm}
+In the MDP(Markov Decision Process) for average-reward formulations:
+
+$$\frac{\partial \rho}{\partial \theta} = \sum_{a}d^\pi(s) \sum_a \frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a)$$
+\end{thm}
+
+\begin{proof}
+For the average-reward formulations, we can denote the reward as:
+$$V^{\pi}(s) =  \sum_a \pi(s,a) Q^\pi(s,a) $$
+
+
+so we can get:
+$$\frac{\partial V^{\pi}(s)}{\partial \theta} =\frac{\partial}{\partial \theta} \sum_a \pi(s,a) Q^\pi(s,a) $$
+$$ =\sum_a (\frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a) +  \pi(s,a)\frac{\partial Q^\pi(s,a)}{\partial \theta}  ) $$
+$$=\sum_a (\frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a) +  \pi(s,a)\frac{\partial }{\partial \theta}(R^s_a-\rho(\pi)+\sum_{s'}P^a_{ss'} V^\pi(s')) ) $$
+$$=\sum_a (\frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a) +  \pi(s,a)(-\frac{\partial \rho}{\partial \theta}+\sum_{s'}P^a_{ss'} \frac{\partial V^\pi(s')}{\partial \theta}) )$$
+which can be sorted out and summing by $d^\pi$ as:
+$$\sum_s d^\pi(s) \frac{\partial \rho}{\partial \theta} = \sum_s d^\pi(s) \sum_a \frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a) + \sum_s d^\pi(s) \sum_a \pi(s,a) \sum_{s'}P^a_{ss'} \frac{\partial V^\pi(s')}{\partial \theta}) - \sum_s d^\pi(s) \frac{\partial V^{\pi}(s)}{\partial \theta}$$
+
+using the stationary of $d^\pi$ and we can get:
+$$\sum_s d^\pi(s) \frac{\partial \rho}{\partial \theta} = \sum_s d^\pi(s) \sum_a \frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a) + \sum_{s' \in S} d^\pi(s') \frac{\partial V^{\pi}(s')}{\partial \theta} - \sum_{s \in S} d^\pi(s) \frac{\partial V^{\pi}(s)}{\partial \theta}$$
+$$\Rightarrow \frac{\partial \rho}{\partial \theta} = \sum_{a}d^\pi(s) \sum_a \frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a)$$
+
+\end{proof}
+
+Based on this theorem, we can use the $\frac{\partial \rho}{\partial \theta} = \sum_{a}d^\pi(s) \sum_a \frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a)$ to find the most suitable descent gradient. In the next section, we will propose a model for this.
+
+\section{The Model and The Experiment}
+The $\rho(\pi)$ is defined as the average reward formulation denotes the performance of the polocies the agent chooses, which is an optimization target needs to be maximized. So the base idea is:
+
+$$\frac{\partial \pi(s,a)}{\partial \theta}^* = \min_{\frac{\partial \pi(s,a)}{\partial \theta}}  \rho(\pi)$$
+
+where the $\frac{\partial \pi(s,a)}{\partial \theta}^*$ means the gradient maximize the $\rho(\pi)$, so the core idea is let $\frac{\partial \rho}{\partial \theta} = 0$ and this means $\frac{\partial \pi(s,a)}{\partial \theta}$ and $Q^\pi(s,a)$ need to be orthogonal:
+
+$$\frac{\partial \rho}{\partial \theta} \rightarrow 0= \sum_{a}d^\pi(s) \sum_a \frac{\partial \pi(s,a)}{\partial \theta} Q^\pi(s,a)$$
+
+\textbf{The Model:} The model with two approximation functions, $f^\triangledown(\cdot)$ and $f^Q(\cdot)$, is proposed. The $f^\triangledown(\cdot)$ tries to learn the map from the states and actions to the gradient, and $f^Q(\cdot)$ tries to evaluate the value of the actions based on the states. The whole structure of the model is given in the Figure.1.
+
+\textbf{The Dateset:} We make the experiment enviroment on the Fuzzy World, in which a 3D virtual enviroment with multiple tasks that require logical reasoning based on visual information and semantic information can be given.
+
+\textbf{The Baseline Model:} The baseline model we use is the GFT(Guided Feature Transformation) model proposed by Baidu \cite{A4},which is a simple but effective neural language grounding module for embodied agents that can be trained end to end from scratch taking raw pixels, unstructured linguistic commands, and sparse rewards as the inputs. And the experiment enviroment is also on the Fuzzy World.
+
+\textbf{The Result:} The result shows that our method (as the target cost function) can better converge more stably and quickly compared to the baseline model.
+
+
+
+
+\section{Conclusion}
+In this paper, we propose a method for the gradient learning which can be seen as the automatic policy gradient descent. As experiments established, the approach is powerful and did better than specifically fitted solutions such as the weak-supervised or half-supervised models like GFT(Guided Feature Transformation) model proposed by Baidu \cite{A4}. $f^\triangledown(\cdot)$ is used to learn the policy gradient, which can be pre-trained as a network and used in the agent tasks. However, doubtlessly much more work can be done on this front by more tasks.
+
+
+\end{document}

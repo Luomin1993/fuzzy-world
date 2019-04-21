@@ -1,0 +1,51 @@
+move to the front of cowmove to truckmove to jeepmove to the behind of bed
+move to the left of chairmove to jeepmove to pipe
+move to the front of chairmove to the left of bedmove to the right of jeepmove to the up of cow
+move to the right of cowmove to the up of tablemove to the right of bedmove to the front of horse
+move to tablemove to the up of jeepmove to the left of bedmove to the front of truck
+move to the right of cowmove to the right of musicmove to the right of jeep
+move to the right of pipemove to the left of chairmove to the right of truckmove to the behind of music
+move to truckmove to the right of chairmove to the front of table
+move to bedmove to horsemove to jeepmove to the left of pipe
+move to the right of chairmove to jeepmove to the behind of cow
+move to the behind of bedmove to the up of pipemove to the front of truckmove to the behind of table
+move to the up of musicmove to the up of truckmove to the front of pipemove to the front of bed
+move to the up of jeepmove to the front of chairmove to the behind of table
+move to the front of musicmove to the right of horsemove to the up of jeep
+move to the behind of musicmove to the behind of tablemove to the right of pipe
+move to the up of musicmove to the front of bedmove to the behind of cow
+move to the behind of pipemove to the front of chairmove to the front of tablemove to cow
+move to the front of pipemove to the behind of bedmove to the behind of jeep
+move to the front of tablemove to the right of truckmove to the front of horsemove to the front of jeep
+move to the up of jeepmove to the up of cowmove to the behind of bedmove to the up of music
+move to the front of jeepmove to the behind of tablemove to musicmove to chair
+move to the up of truck;move to the front of jeep;move to the left of pipe;
+move to the left of cow;move to the up of truck;move to table;
+move to the left of cow;move to the right of chair;move to the up of music;move to the left of table;
+move to the left of table;move to the left of jeep;move to the left of cow;move to the right of music;
+move to the right of truck;move to music;move to the up of table;move to the left of chair;
+move to the front of music;move to the front of pipe;move to chair;
+move to the right of bed;move to the left of cow;move to chair;
+move to the front of pipe;move to the right of table;move to cow;
+move to the right of horse;move to the up of truck;move to the behind of bed;
+move to the right of cow;move to table;move to the right of music;
+move to the front of chair;move to table;move to the behind of bed;move to the up of horse;
+move to the right of chair;move to the left of truck;move to the up of bed;move to the left of jeep;
+move to chair;move to the left of horse;move to the front of music;
+move to cow;move to the behind of table;move to the up of music;
+move to the left of cow;move to truck;move to the left of table;move to the left of music;
+move to music;move to the up of table;move to the left of truck;
+move to the behind of bed;move to the left of truck;move to the right of jeep;
+move to the left of chair;move to the up of bed;move to the front of horse;move to the left of pipe;
+move to the left of music;move to the front of truck;move to the left of pipe;
+move to the front of pipe;move to the right of horse;move to the left of cow;
+move to the left of truck;move to the left of music;move to the front of table;
+move to jeep;move to the behind of chair;move to the left of truck;move to music;
+move to the behind of music;move to the behind of cow;move to the right of bed;
+move to the right of chair;move to the left of jeep;move to the front of bed;move to the right of music;
+move to music;move to the behind of horse;move to cow;
+move to table;move to the right of jeep;move to the behind of music;
+move to the front of truck;move to the left of horse;move to the left of bed;
+move to the right of truck;move to the left of bed;move to the front of pipe;
+move to the left of pipe;move to the behind of bed;move to the front of jeep;
+move to the front of truck;move to the left of chair;move to the behind of table;
